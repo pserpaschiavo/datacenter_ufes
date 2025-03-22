@@ -7,13 +7,16 @@ Este repositório tem como objetivo reunir e organizar uma máquina virtual (VM)
 
 O uso do script do Vagrant é opcional. A máquina virtual (VM) planejada tem as seguintes configurações:
 
-|Recursos   |Limites        |
-|:---------:|--------------:|
-|CPU   	    |2 cores   	    |
-|Memória	|4096 Mb        |
-|SO   	    |Ubuntu 64bits 	|
-|Versão	SO  |22.04 (jammy) 	|
+|Recursos       |Limites        |
+|:--------------|--------------:|
+|CPU   	        |2 cores   	    |
+|Memória	    |4096 Mb        |
+|SO   	        |Ubuntu 64bits 	|
+|Versão	SO      |22.04 (jammy) 	|
+|Versão	Mininet |2.3.0       	|
 
+
+> Caso o usuário prefira usar outro software de virtualização (VirtualBox, VMware, KVM), o arquivo [install_mininet.sh](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/setup_vm/mininet_install.sh) também poderá ser usado.
 
 ### Modo de uso (Vagrant Script):
 
