@@ -7,7 +7,7 @@ Este repositório tem como objetivo reunir e organizar uma máquina virtual (VM)
 
 O uso do script do Vagrant é opcional. A máquina virtual (VM) planejada tem as seguintes configurações:
 
-|Recursos       |Limites        |
+|Recursos VM    |Limites        |
 |:--------------|--------------:|
 |CPU   	        |2 cores   	    |
 |Memória	    |4096 Mb        |
@@ -16,7 +16,7 @@ O uso do script do Vagrant é opcional. A máquina virtual (VM) planejada tem as
 |Versão	Mininet |2.3.0       	|
 
 
-> Caso o usuário prefira usar outro software de virtualização (VirtualBox, VMware, KVM), o arquivo [install_mininet.sh](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/setup_vm/mininet_install.sh) também poderá ser usado.
+> Caso o usuário prefira usar outro software de virtualização (VirtualBox, VMware, KVM), o arquivo [install_mininet.sh](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/setup_vm/mininet_install.sh) poderá ser usado[^*].
 
 ### Modo de uso (Vagrant Script):
 
@@ -24,7 +24,7 @@ Faça o download deste repositório e acesse a pasta:
 
 
 ```
-git clone
+git clone https://github.com/pserpaschiavo/datacenter_ufes.git
 cd datacenter_ufes/
 ```
 
@@ -72,3 +72,6 @@ Observe se os dois terminais não apresentam erros e se suas informações serã
 
 
 Se o comportamento dos logs e dos comandos dentro do Mininet forem semelhantes ao do exemplo acima, a máquina virtual está funcionando como esperado.
+
+
+[^*]: Após o download do arquivo [install_mininet.sh](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/setup_vm/mininet_install.sh), basta digitar o comando `bash ./datacenter-ufes/setup_vm/mininet_install.sh` em uma pasta que hospedará o Mininet.
