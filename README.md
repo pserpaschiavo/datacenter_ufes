@@ -16,23 +16,19 @@ Faça o download deste repositório e acesse a pasta:
 
 ```
 git clone
-
 cd datacenter_ufes/
-
 ```
 
 A seguir:
 
 ```
 vagrant up
-
 ```
 
 Após o término do processo de criação da máquina virtual (VM), digite:
 
 ```
 vagrant ssh
-
 ```
 
 Você verá na tela:
@@ -54,7 +50,9 @@ ryu-manager ryu.app.simple_switch_stp_13
 No **terminal 2**, digite: 
 
 ```
-sudo mn --custom ./Code/Fat\ Tree.py --topo=mytopo --controller=remote,ip=127.0.0.1,port=6633 --mac --arp --link=tc
+sudo mn --custom ./Code/Fat\ Tree.py --topo=mytopo \
+    --controller=remote,ip=127.0.0.1,port=6633 \
+    --mac --arp --link=tc
 ```
 
 
