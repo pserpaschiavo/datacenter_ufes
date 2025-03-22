@@ -55,7 +55,7 @@ sudo mn --custom ./Code/Fat\ Tree.py --topo=mytopo \
     --mac --arp --link=tc
 ```
 
-Ainda no **terminal 2**, digite os comandos `dump` e `pingall`, para conferir se os dispositivos estão conectados.
+Ainda no **terminal 2**, digite os comandos `dump` e `pingall` para conferir se os dispositivos estão conectados.
 
 Observe se os dois terminais não apresentam erros e se suas informações serão atualizadas com o tempo.
 
