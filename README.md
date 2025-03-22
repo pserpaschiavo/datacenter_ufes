@@ -42,12 +42,12 @@ Esta seção apresenta um roteiro de testes para verificar o funcionamento do Ry
 
 Abra dois terminais:
 
-No **terminal 1**, digite: 
+No **terminal 1**, digite o comando abaixo para ativar o controlador Ryu: 
 ```
 ryu-manager ryu.app.simple_switch_stp_13
 ```
 
-No **terminal 2**, digite: 
+No **terminal 2**, digite o comando abaixo para acessar Mininet:
 
 ```
 sudo mn --custom ./Code/Fat\ Tree.py --topo=mytopo \
@@ -55,6 +55,7 @@ sudo mn --custom ./Code/Fat\ Tree.py --topo=mytopo \
     --mac --arp --link=tc
 ```
 
+Ainda no **terminal 2**, digite os comandos `dump` e `pingall`, para conferir se os dispositivos estão conectados.
 
 Observe se os dois terminais não apresentam erros e se suas informações serão atualizadas com o tempo.
 
