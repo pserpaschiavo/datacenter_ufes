@@ -7,6 +7,7 @@ Este repositório tem como objetivo reunir e organizar uma máquina virtual (VM)
 
 O uso do script do Vagrant é opcional. A máquina virtual (VM) planejada tem as seguintes configurações:
 
+|:---------:|--------------:|
 |CPU   	    |2 cores   	    |
 |Memória	|4096 Mb        |
 |SO   	    |Ubuntu 64bits 	|
