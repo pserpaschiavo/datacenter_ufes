@@ -7,16 +7,13 @@ Este repositório tem como objetivo reunir e organizar uma máquina virtual (VM)
 
 O uso do script do Vagrant é opcional. A máquina virtual (VM) planejada tem as seguintes configurações:
 
-|Recursos       |Limites        |
-|:--------------|--------------:|
-|CPU   	        |2 cores   	    |
-|Memória	    |4096 Mb        |
-|SO   	        |Ubuntu 64bits 	|
-|Versão	SO      |22.04 (jammy) 	|
-|Versão	Mininet |2.3.0       	|
+|Recursos   |Limites        |
+|:---------:|--------------:|
+|CPU   	    |2 cores   	    |
+|Memória	|4096 Mb        |
+|SO   	    |Ubuntu 64bits 	|
+|Versão	SO  |22.04 (jammy) 	|
 
-
-> Caso o usuário prefira usar o VirtualBox, o script `mininet_install.sh` é sugerido para a instalação automatizado do Mininet e seus componentes.
 
 ### Modo de uso (Vagrant Script):
 
