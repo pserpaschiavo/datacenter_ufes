@@ -47,16 +47,16 @@ O terminal irá exibir a tela de boas vindas da VM:
 
 ### Checagem das aplicações:
 
-Esta seção apresenta um roteiro de testes para verificar o funcionamento do Ryu e do Mininet.
+Esta seção apresenta um roteiro de testes para verificar o funcionamento do *Ryu* e do *Mininet*.
 
 Abra dois terminais:
 
-No **terminal 1**, digite o comando abaixo para ativar o controlador Ryu: 
+No **terminal 1**, digite o comando abaixo para ativar o controlador *Ryu*: 
 ```
 ryu-manager ryu.app.simple_switch_stp_13
 ```
 
-No **terminal 2**, digite o comando abaixo para acessar Mininet:
+No **terminal 2**, digite o comando abaixo para acessar *Mininet*:
 
 ```
 sudo mn --custom ./Fat-Tree-Data-Center-Topology/Code/Fat\ Tree.py --topo=mytopo \
@@ -71,7 +71,7 @@ Observe se os dois terminais não apresentam erros e se suas informações serã
 ![gif das telas](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/assets/gif/mininet.gif)
 
 
-Se o comportamento dos logs e dos comandos dentro do Mininet forem semelhantes ao do exemplo acima, a máquina virtual está funcionando como esperado.
+> Se o comportamento dos logs e dos comandos dentro do *Mininet* forem semelhantes ao do exemplo acima, a máquina virtual está funcionando como esperado.
 
 
 [^*]: Após o download do arquivo [install_mininet.sh](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/setup_vm/mininet_install.sh), basta digitar o comando `bash ./datacenter-ufes/setup_vm/mininet_install.sh` em uma pasta que hospedará o Mininet.
