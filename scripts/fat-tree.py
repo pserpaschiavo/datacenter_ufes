@@ -104,16 +104,17 @@ def configure_ips(net, topo):
             host.setIP(new_ip, intf="h{}-eth0".format(i * 2 + j + 1))
             host.cmd('ip route add default via 10.2.{}.1'.format(i + 1))
 
-    # Install FRR and traceroute and start FRR
+# Install FRR and traceroute and start FRR
     for switch in net.switches:
         switch.cmd('apt-get update')
         switch.cmd('apt-get install -y traceroute frr')
-        switch.cmd('service frr status')  # Substitua por esta linha
-        switch.cmd('vtysh -c "show ip ospf neighbor"') # Adicione esta linha para ver o retorno direto dentro do mininet
-        
+        switch.cmd('ospfd')  # Adicione esta linha
+        switch.cmd('vtysh -c "show ip ospf neighbor"')
+
     for host in net.hosts:
         host.cmd('apt-get update')
         host.cmd('apt-get install -y traceroute')
+
 
 if __name__ == '__main__':
     topo = MyTopo()
