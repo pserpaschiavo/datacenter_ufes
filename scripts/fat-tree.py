@@ -108,9 +108,9 @@ def configure_ips(net, topo):
     for switch in net.switches:
         switch.cmd('apt-get update')
         switch.cmd('apt-get install -y traceroute frr')
-        switch.cmd('frr -d -f frr_configs/frr_{}.conf'.format(switch.name))
-        switch.cmd('service frr start')
-
+        switch.cmd('service frr status')  # Substitua por esta linha
+        switch.cmd('vtysh -c "show ip ospf neighbor"') # Adicione esta linha para ver o retorno direto dentro do mininet
+        
     for host in net.hosts:
         host.cmd('apt-get update')
         host.cmd('apt-get install -y traceroute')
