@@ -100,12 +100,9 @@ def configure_ips(net, topo):
     for i in range(L3):
         for j in range(2):
             host = net.getNodeByName('h{}'.format(i * 2 + j + 1))
-            host.cmd('ifconfig h{}-eth0 0'.format(i * 2 + j + 1))
-            host.cmd('ip addr add 10.2.{}.{}/24 dev h{}-eth0'.format(i + 1, j + 2, i * 2 + j + 1))
-            host.cmd('ip link set h{}-eth0 up'.format(i * 2 + j + 1))
+            new_ip = "10.2.{}.{}/24".format(i + 1, j + 2)
+            host.setIP(new_ip, intf="h{}-eth0".format(i * 2 + j + 1))
             host.cmd('ip route add default via 10.2.{}.1'.format(i + 1))
-
-
 
 
     for switch in net.switches:
