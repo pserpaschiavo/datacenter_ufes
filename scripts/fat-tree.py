@@ -62,30 +62,39 @@ def configure_ips(net, topo):
     L2 = pod * pod // 2
     L3 = L2
 
-    for switch in net.switches:
-        switch.cmd('frr -d -f frr_configs/frr_{}.conf'.format(switch.name))
-
     # Configure switch IPs
     for i in range(L1):
         switch = net.getNodeByName('c{}'.format(i + 1))
-        switch.cmd('ip addr add 10.0.{}.1/24 dev c{}-eth0'.format(i + 1, i + 1))
-        switch.cmd('ip link set c{}-eth0 up'.format(i+1))
         switch.cmd('ip addr add 10.0.{}.1/24 dev c{}-eth1'.format(i + 1, i + 1))
-        switch.cmd('ip link set c{}-eth1 up'.format(i+1))
+        switch.cmd('ip link set c{}-eth1 up'.format(i + 1))
+        switch.cmd('ip addr add 10.0.{}.2/24 dev c{}-eth2'.format(i + 1, i + 1))
+        switch.cmd('ip link set c{}-eth2 up'.format(i+1))
+        switch.cmd('ip addr add 10.0.{}.3/24 dev c{}-eth3'.format(i + 1, i + 1))
+        switch.cmd('ip link set c{}-eth3 up'.format(i+1))
+        switch.cmd('ip addr add 10.0.{}.4/24 dev c{}-eth4'.format(i + 1, i + 1))
+        switch.cmd('ip link set c{}-eth4 up'.format(i+1))
 
     for i in range(L2):
         switch = net.getNodeByName('a{}'.format(L1 + i + 1))
-        switch.cmd('ip addr add 10.1.{}.1/24 dev a{}-eth0'.format(i + 1, L1 + i + 1))
-        switch.cmd('ip link set a{}-eth0 up'.format(L1+ i + 1))
         switch.cmd('ip addr add 10.1.{}.1/24 dev a{}-eth1'.format(i + 1, L1 + i + 1))
-        switch.cmd('ip link set a{}-eth1 up'.format(L1+ i + 1))
+        switch.cmd('ip link set a{}-eth1 up'.format(L1 + i + 1))
+        switch.cmd('ip addr add 10.1.{}.2/24 dev a{}-eth2'.format(i + 1, L1 + i + 1))
+        switch.cmd('ip link set a{}-eth2 up'.format(L1+ i + 1))
+        switch.cmd('ip addr add 10.1.{}.3/24 dev a{}-eth3'.format(i + 1, L1 + i + 1))
+        switch.cmd('ip link set a{}-eth3 up'.format(L1+ i + 1))
+        switch.cmd('ip addr add 10.1.{}.4/24 dev a{}-eth4'.format(i + 1, L1 + i + 1))
+        switch.cmd('ip link set a{}-eth4 up'.format(L1+ i + 1))
 
     for i in range(L3):
         switch = net.getNodeByName('e{}'.format(L1 + L2 + i + 1))
-        switch.cmd('ip addr add 10.2.{}.1/24 dev e{}-eth0'.format(i + 1, L1 + L2 + i + 1))
-        switch.cmd('ip link set e{}-eth0 up'.format(L1 + L2 + i + 1))
         switch.cmd('ip addr add 10.2.{}.1/24 dev e{}-eth1'.format(i + 1, L1 + L2 + i + 1))
         switch.cmd('ip link set e{}-eth1 up'.format(L1 + L2 + i + 1))
+        switch.cmd('ip addr add 10.2.{}.2/24 dev e{}-eth2'.format(i + 1, L1 + L2 + i + 1))
+        switch.cmd('ip link set e{}-eth2 up'.format(L1 + L2 + i + 1))
+        switch.cmd('ip addr add 10.2.{}.3/24 dev e{}-eth3'.format(i + 1, L1 + L2 + i + 1))
+        switch.cmd('ip link set e{}-eth3 up'.format(L1 + L2 + i + 1))
+        switch.cmd('ip addr add 10.2.{}.4/24 dev e{}-eth4'.format(i + 1, L1 + L2 + i + 1))
+        switch.cmd('ip link set e{}-eth4 up'.format(L1 + L2 + i + 1))
 
     # Configure host IPs
     for i in range(L3):
@@ -95,6 +104,10 @@ def configure_ips(net, topo):
             host.cmd('ip link set h{}-eth0 up'.format(i * 2 + j + 1))
             host.cmd('ip route add default via 10.2.{}.1'.format(i + 1))
 
+    for switch in net.switches:
+        switch.cmd('frr -d -f frr_configs/frr_{}.conf'.format(switch.name))
+        
+
 if __name__ == '__main__':
     topo = MyTopo()
     net = Mininet(topo=topo, link=TCLink)
@@ -102,3 +115,4 @@ if __name__ == '__main__':
     configure_ips(net, topo)
     net.interact()
     net.stop()
+    
