@@ -6,8 +6,12 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt install vim git python-is-python3 software-properties-common python3.7-full python3.7-venv -y
 sudo apt upgrade -y
 
-# Clonar o Fat Tree
-git clone https://github.com/HassanMahmoodKhan/Fat-Tree-Data-Center-Topology.git
+# Download dos scripts necessarios:
+mkdir ./scripts
+
+curl https://raw.githubusercontent.com/HassanMahmoodKhan/Fat-Tree-Data-Center-Topology/refs/heads/main/Code/Fat%20Tree.py -o ./scripts/fat-tree-original.py
+
+
 
 # Clonar e configurar o Mininet
 git clone https://github.com/mininet/mininet.git
@@ -19,6 +23,15 @@ sed -i.bak 's|git://|https://|g' ./util/install.sh
 
 # Instalar o Mininet
 ./util/install.sh -a
+
+# Instalar o FRR - FRRouting
+curl -s https://deb.frrouting.org/frr/keys.gpg | sudo tee /usr/share/keyrings/frrouting.gpg > /dev/null
+
+FRRVER="frr-stable"
+echo deb '[signed-by=/usr/share/keyrings/frrouting.gpg]' https://deb.frrouting.org/frr \
+     $(lsb_release -s -c) $FRRVER | sudo tee -a /etc/apt/sources.list.d/frr.list
+
+sudo apt update && sudo apt install frr frr-pythontools
 
 # Criar e ativar o ambiente virtual
 python3.7 -m venv /home/vagrant/.venv
