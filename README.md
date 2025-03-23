@@ -68,7 +68,7 @@ Ainda no **terminal 2**, digite os comandos `dump` e `pingall` para conferir se 
 
 Observe se os dois terminais não apresentam erros e se suas informações serão atualizadas com o tempo.
 
-(gif das telas)
+![gif das telas](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/assets/gif/mininet.gif)
 
 
 Se o comportamento dos logs e dos comandos dentro do Mininet forem semelhantes ao do exemplo acima, a máquina virtual está funcionando como esperado.
