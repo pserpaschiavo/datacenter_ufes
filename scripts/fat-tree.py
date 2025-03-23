@@ -62,7 +62,7 @@ def configure_ips(net, topo):
     L2 = pod * pod // 2
     L3 = L2
 
-    # Configure switch IPs
+    # Configurar IPs dos switches
     for i in range(L1):
         switch = net.getNodeByName('c{}'.format(i + 1))
         switch.cmd('ip addr add 10.0.{}.1/24 dev c{}-eth1'.format(i + 1, i + 1))
@@ -79,7 +79,7 @@ def configure_ips(net, topo):
         switch.cmd('ip addr add 10.1.{}.1/24 dev a{}-eth1'.format(i + 1, L1 + i + 1))
         switch.cmd('ip link set a{}-eth1 up'.format(L1 + i + 1))
         switch.cmd('ip addr add 10.1.{}.2/24 dev a{}-eth2'.format(i + 1, L1 + i + 1))
-        switch.cmd('ip link set a{}-eth2 up'.format(L1 + i + 1))
+        switch.cmd('ip link set a{}-eth2 up'.iat(L1 + i + 1))
         switch.cmd('ip addr add 10.1.{}.3/24 dev a{}-eth3'.format(i + 1, L1 + i + 1))
         switch.cmd('ip link set a{}-eth3 up'.format(L1 + i + 1))
         switch.cmd('ip addr add 10.1.{}.4/24 dev a{}-eth4'.format(i + 1, L1 + i + 1))
@@ -96,7 +96,7 @@ def configure_ips(net, topo):
         switch.cmd('ip addr add 10.2.{}.4/24 dev e{}-eth4'.format(i + 1, L1 + L2 + i + 1))
         switch.cmd('ip link set e{}-eth4 up'.format(L1 + L2 + i + 1))
 
-    # Configure host IPs
+    # Configurar IPs dos hosts
     for i in range(L3):
         for j in range(2):
             host = net.getNodeByName('h{}'.format(i * 2 + j + 1))
@@ -104,19 +104,19 @@ def configure_ips(net, topo):
             host.setIP(new_ip, intf="h{}-eth0".format(i * 2 + j + 1))
             host.cmd('ip route add default via 10.2.{}.1'.format(i + 1))
 
-# Install FRR and traceroute and start FRR
+    # Instalar FRR e traceroute e iniciar FRR
     for switch in net.switches:
         switch.cmd('apt-get update')
         switch.cmd('apt-get install -y traceroute frr')
         switch.cmd('frr -d -l stdout -f frr_configs/frr_{}.conf'.format(switch.name))
         switch.cmd('service frr status')
 
+    # Instala o traceroute e adiciona os servidores DNS nos hosts
     for host in net.hosts:
+        host.cmd('echo "nameserver 8.8.8.8" >> /etc/resolv.conf')
+        host.cmd('echo "nameserver 8.8.4.4" >> /etc/resolv.conf')
         host.cmd('apt-get update')
         host.cmd('apt-get install -y traceroute')
-        host.cmd('echo "nameserver 8.8.8.8" > /etc/resolv.conf') #adicionado google dns
-        host.cmd('echo "nameserver 8.8.4.4" >> /etc/resolv.conf') #adicionado google dns
-
 
 if __name__ == '__main__':
     topo = MyTopo()
