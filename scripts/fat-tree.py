@@ -108,12 +108,14 @@ def configure_ips(net, topo):
     for switch in net.switches:
         switch.cmd('apt-get update')
         switch.cmd('apt-get install -y traceroute frr')
-        switch.cmd('ospfd')  # Adicione esta linha
-        switch.cmd('vtysh -c "show ip ospf neighbor"')
+        switch.cmd('frr -d -l stdout -f frr_configs/frr_{}.conf'.format(switch.name))
+        switch.cmd('service frr status')
 
     for host in net.hosts:
         host.cmd('apt-get update')
         host.cmd('apt-get install -y traceroute')
+        host.cmd('echo "nameserver 8.8.8.8" > /etc/resolv.conf') #adicionado google dns
+        host.cmd('echo "nameserver 8.8.4.4" >> /etc/resolv.conf') #adicionado google dns
 
 
 if __name__ == '__main__':
