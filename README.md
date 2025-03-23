@@ -1,9 +1,32 @@
 # datacenter_ufes
 ## Repositório para projeto de disciplina de Redes de Datacenter ofertada pelo Programa de Pós Graduação em Engenharia Elétrica.
 
-### Introdução
+### **Introdução**
 
-Este repositório tem como objetivo reunir e organizar uma máquina virtual (VM) para o estudo do Mininet e seus componentes.
+Este repositório tem como objetivo reunir e organizar uma máquina virtual (VM - *Virtual Machine*) para o estudo do Mininet, os componentes fundamentais de Redes Definidas por Software (SDN), a função dos controladores e a importância das topologias de rede, com um foco especial na topologia Fat Tree.
+
+#### Redes Definidas por Software (SDN)
+
+SDN representa um paradigma inovador na área de redes, que propõe a separação do plano de controle do plano de dados. Essa abordagem permite uma gestão de rede mais flexível e programável, facilitando a implementação de serviços e a otimização do desempenho.
+
+#### Mininet: Ferramenta de Emulação para Experimentação em SDN
+
+O Mininet é uma ferramenta poderosa para a criação de ambientes de rede virtualizados, possibilitando a simulação de topologias complexas e a experimentação com diferentes controladores e aplicações SDN. Sua capacidade de criar redes de forma rápida e eficiente o torna uma ferramenta valiosa para pesquisa e desenvolvimento.
+
+#### Controladores SDN: O Cérebro da Rede
+
+Os controladores SDN desempenham um papel central na arquitetura SDN, sendo responsáveis pelo gerenciamento do fluxo de dados e pela tomada de decisões na rede. Eles se comunicam com os dispositivos de rede através de protocolos como o OpenFlow, permitindo a implementação de políticas de rede de forma centralizada.
+
+#### Topologias de Rede: A Estrutura da Conectividade
+
+A topologia de rede define a forma como os dispositivos estão conectados entre si, influenciando diretamente o desempenho e a confiabilidade da rede. Existem diversas topologias, cada uma com suas próprias características e aplicações.
+
+### Fat Tree: Uma Topologia de Alto Desempenho para Data Centers
+
+A topologia Fat Tree se destaca por sua alta largura de banda e baixa latência, tornando-a ideal para data centers e outras aplicações de alto desempenho. Sua estrutura hierárquica e simétrica garante uma distribuição eficiente do tráfego, evitando gargalos e otimizando o desempenho da rede.
+Conclusão
+
+### **Descrição dos recursos**
 
 O uso do script do Vagrant é opcional. A máquina virtual (VM) planejada tem as seguintes configurações:
 
@@ -18,7 +41,7 @@ O uso do script do Vagrant é opcional. A máquina virtual (VM) planejada tem as
 
 > Caso o usuário prefira usar outro software de virtualização (VirtualBox, VMware, KVM), o arquivo [install_mininet.sh](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/setup_vm/mininet_install.sh) poderá ser usado[^*].
 
-### Modo de uso (Vagrant Script):
+### **Modo de uso (Vagrant Script)**
 
 Faça o download deste repositório e acesse a pasta:
 
@@ -34,7 +57,7 @@ A seguir:
 vagrant up
 ```
 
-Após o término do processo de criação da máquina virtual (VM), digite:
+Após o término do processo de criação da máquina virtual (VM), digite o comando a seguir para fazer a conexão remota com a VM:
 
 ```
 vagrant ssh
@@ -45,7 +68,7 @@ O terminal irá exibir a tela de boas vindas da VM:
 ![vm_welcome_screen](/assets/images/welcome.png)
 
 
-### Checagem das aplicações:
+### **Checagem das aplicações:**
 
 Esta seção apresenta um roteiro de testes para verificar o funcionamento do *Ryu* e do *Mininet*.
 
