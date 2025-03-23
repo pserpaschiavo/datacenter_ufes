@@ -109,7 +109,11 @@ def configure_ips(net, topo):
         switch.cmd('apt-get update')
         switch.cmd('apt-get install -y traceroute frr')
         switch.cmd('frr -d -f frr_configs/frr_{}.conf'.format(switch.name))
+        switch.cmd('service frr start')
 
+    for host in net.hosts:
+        host.cmd('apt-get update')
+        host.cmd('apt-get install -y traceroute')
 
 if __name__ == '__main__':
     topo = MyTopo()
