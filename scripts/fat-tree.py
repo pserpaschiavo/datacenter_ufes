@@ -50,7 +50,7 @@ class MyTopo(Topo):
         # Creating hosts and adding links between switches and hosts
         for i in range(L3):
             for j in range(2):
-                hs = self.addHost('h{}'.format(i * 2 + j + 1), bw=10)
+                hs = self.addHost('h{}'.format(i * 2 + j + 1),ip = None, bw=10)
                 self.addLink(e[i], hs)
 
 topos = {"mytopo": (lambda: MyTopo())}
@@ -100,9 +100,13 @@ def configure_ips(net, topo):
     for i in range(L3):
         for j in range(2):
             host = net.getNodeByName('h{}'.format(i * 2 + j + 1))
+            host.cmd('ifconfig h{}-eth0 0'.format(i * 2 + j + 1))
             host.cmd('ip addr add 10.2.{}.{}/24 dev h{}-eth0'.format(i + 1, j + 2, i * 2 + j + 1))
             host.cmd('ip link set h{}-eth0 up'.format(i * 2 + j + 1))
             host.cmd('ip route add default via 10.2.{}.1'.format(i + 1))
+
+
+
 
     for switch in net.switches:
         switch.cmd('frr -d -f frr_configs/frr_{}.conf'.format(switch.name))
@@ -115,4 +119,3 @@ if __name__ == '__main__':
     configure_ips(net, topo)
     net.interact()
     net.stop()
-    
