@@ -18,6 +18,7 @@ sed -i.bak 's|git://|https://|g' ./util/install.sh
 ./util/install.sh -a
 
 # Instalar o FRR - FRRouting
+cd ~/
 curl -s https://deb.frrouting.org/frr/keys.gpg | sudo tee /usr/share/keyrings/frrouting.gpg > /dev/null
 
 FRRVER="frr-stable"
@@ -44,10 +45,7 @@ echo 'export PATH=$PATH:~/.local/bin' >> /home/vagrant/.bashrc
 # Clonar o repositório datacenter-ufes
 git clone https://github.com/pserpaschiavo/datacenter_ufes.git
 
-rm -rf ./datacenter_ufes/assets 
-rm -rf ./datacenter_ufes/setup_vm 
-rm -rf ./datacenter_ufes/.gitignore 
-rm -rf ./datacenter_ufes/Vagrantfile
+rm -rf ./datacenter_ufes/assets ./datacenter_ufes/setup_vm ./datacenter_ufes/.gitignore ./datacenter_ufes/Vagrantfile
 
 # Recarregar o .bashrc para aplicar as alterações
 source /home/vagrant/.bashrc
