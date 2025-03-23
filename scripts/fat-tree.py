@@ -50,7 +50,7 @@ class MyTopo(Topo):
         # Creating hosts and adding links between switches and hosts
         for i in range(L3):
             for j in range(2):
-                hs = self.addHost('h{}'.format(i * 2 + j + 1),ip = None, bw=10)
+                hs = self.addHost('h{}'.format(i * 2 + j + 1), ip=None, bw=10)
                 self.addLink(e[i], hs)
 
 topos = {"mytopo": (lambda: MyTopo())}
@@ -68,22 +68,22 @@ def configure_ips(net, topo):
         switch.cmd('ip addr add 10.0.{}.1/24 dev c{}-eth1'.format(i + 1, i + 1))
         switch.cmd('ip link set c{}-eth1 up'.format(i + 1))
         switch.cmd('ip addr add 10.0.{}.2/24 dev c{}-eth2'.format(i + 1, i + 1))
-        switch.cmd('ip link set c{}-eth2 up'.format(i+1))
+        switch.cmd('ip link set c{}-eth2 up'.format(i + 1))
         switch.cmd('ip addr add 10.0.{}.3/24 dev c{}-eth3'.format(i + 1, i + 1))
-        switch.cmd('ip link set c{}-eth3 up'.format(i+1))
+        switch.cmd('ip link set c{}-eth3 up'.format(i + 1))
         switch.cmd('ip addr add 10.0.{}.4/24 dev c{}-eth4'.format(i + 1, i + 1))
-        switch.cmd('ip link set c{}-eth4 up'.format(i+1))
+        switch.cmd('ip link set c{}-eth4 up'.format(i + 1))
 
     for i in range(L2):
         switch = net.getNodeByName('a{}'.format(L1 + i + 1))
         switch.cmd('ip addr add 10.1.{}.1/24 dev a{}-eth1'.format(i + 1, L1 + i + 1))
         switch.cmd('ip link set a{}-eth1 up'.format(L1 + i + 1))
         switch.cmd('ip addr add 10.1.{}.2/24 dev a{}-eth2'.format(i + 1, L1 + i + 1))
-        switch.cmd('ip link set a{}-eth2 up'.format(L1+ i + 1))
+        switch.cmd('ip link set a{}-eth2 up'.format(L1 + i + 1))
         switch.cmd('ip addr add 10.1.{}.3/24 dev a{}-eth3'.format(i + 1, L1 + i + 1))
-        switch.cmd('ip link set a{}-eth3 up'.format(L1+ i + 1))
+        switch.cmd('ip link set a{}-eth3 up'.format(L1 + i + 1))
         switch.cmd('ip addr add 10.1.{}.4/24 dev a{}-eth4'.format(i + 1, L1 + i + 1))
-        switch.cmd('ip link set a{}-eth4 up'.format(L1+ i + 1))
+        switch.cmd('ip link set a{}-eth4 up'.format(L1 + i + 1))
 
     for i in range(L3):
         switch = net.getNodeByName('e{}'.format(L1 + L2 + i + 1))
@@ -104,10 +104,12 @@ def configure_ips(net, topo):
             host.setIP(new_ip, intf="h{}-eth0".format(i * 2 + j + 1))
             host.cmd('ip route add default via 10.2.{}.1'.format(i + 1))
 
-
+    # Install FRR and traceroute and start FRR
     for switch in net.switches:
+        switch.cmd('apt-get update')
+        switch.cmd('apt-get install -y traceroute frr')
         switch.cmd('frr -d -f frr_configs/frr_{}.conf'.format(switch.name))
-        
+
 
 if __name__ == '__main__':
     topo = MyTopo()
