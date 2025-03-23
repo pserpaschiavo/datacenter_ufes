@@ -39,12 +39,14 @@ O uso do script do Vagrant é opcional. A máquina virtual (VM) planejada tem as
 |Versão	SO          |22.04 (jammy) 	|
 |Versão Python      |3.7.17         |
 |Versão	*Mininet*   |2.3.0       	|
-|Versão Ryu         |4.34 (pip)     |
+|Versão Ryu         |4.34           |
 |Versão FRR         |10.3           |
 
 
 > Caso o usuário prefira usar outro software de virtualização (VirtualBox, VMware, KVM), o arquivo [install_*Mininet*.sh](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/setup_vm/*Mininet*_install.sh) poderá ser usado[^*].
 ___
+
+---
 
 ### **Modo de uso (Vagrant Script)**
 

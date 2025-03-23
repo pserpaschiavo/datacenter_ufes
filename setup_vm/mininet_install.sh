@@ -6,12 +6,8 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt install vim git python-is-python3 software-properties-common python3.7-full python3.7-venv -y
 sudo apt upgrade -y
 
-# Download dos scripts necessarios:
-mkdir ./scripts
-
-curl https://raw.githubusercontent.com/HassanMahmoodKhan/Fat-Tree-Data-Center-Topology/refs/heads/main/Code/Fat%20Tree.py -o ./scripts/fat-tree-original.py
-
-
+# Clonar o repositório datacenter-ufes
+git clone https://github.com/pserpaschiavo/datacenter_ufes.git
 
 # Clonar e configurar o Mininet
 git clone https://github.com/mininet/mininet.git
