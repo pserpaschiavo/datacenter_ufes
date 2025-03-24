@@ -79,7 +79,7 @@ def configure_ips(net, topo):
         switch.cmd('ip addr add 10.1.{}.1/24 dev a{}-eth1'.format(i + 1, L1 + i + 1))
         switch.cmd('ip link set a{}-eth1 up'.format(L1 + i + 1))
         switch.cmd('ip addr add 10.1.{}.2/24 dev a{}-eth2'.format(i + 1, L1 + i + 1))
-        switch.cmd('ip link set a{}-eth2 up'.iat(L1 + i + 1))
+        switch.cmd('ip link set a{}-eth2 up'.format(L1 + i + 1))  # Corrigido aqui
         switch.cmd('ip addr add 10.1.{}.3/24 dev a{}-eth3'.format(i + 1, L1 + i + 1))
         switch.cmd('ip link set a{}-eth3 up'.format(L1 + i + 1))
         switch.cmd('ip addr add 10.1.{}.4/24 dev a{}-eth4'.format(i + 1, L1 + i + 1))
