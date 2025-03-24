@@ -50,6 +50,6 @@ sudo apt install frr frr-pythontools -y
 # Clonar o repositório datacenter-ufes
 git clone https://github.com/pserpaschiavo/datacenter_ufes.git
 rm -rf ./datacenter_ufes/assets ./datacenter_ufes/setup_vm ./datacenter_ufes/.gitignore ./datacenter_ufes/Vagrantfile
-chmod u+w ./datacenter_ufes/
+
 
 echo "Tudo Pronto. Bons Estudos!!!"

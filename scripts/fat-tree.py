@@ -47,7 +47,7 @@ class FatTreeTopo(Topo):
 
         # Adiciona roteadores na camada Edge
         for i in range(num_edge):
-            router = self.addNode(f'r{i+1}', cls=LinuxRouter)
+            router = self.addHost(f'r{i+1}', cls=LinuxRouter)
             routers.append(router)
             self.addLink(router, edge_switches[i], bw=10)
 
