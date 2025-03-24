@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
 from mininet.topo import Topo
 from mininet.net import Mininet
 from mininet.node import Node, OVSKernelSwitch
 from mininet.link import TCLink
 from mininet.util import dumpNodeConnections
-from mininet.log import setLogLevel, info
+from mininet.log import setLogLevel, info, error
 import os
+import subprocess
 
 class LinuxRouter(Node):
     """Roteador Linux com FRR para OSPF"""
@@ -100,12 +100,15 @@ line vty
             f.write(config)
         
         # Configurar interfaces
-        router.cmd(f'ifconfig r{i+1}-eth0 10.0.{i}.1/24')
+        router.cmd(f'ip addr add 10.0.{i}.1/24 dev r{i+1}-eth0')
         
         # Configurar FRR
         router.cmd(f'cp frr_configs/frr_{router.name}.conf /etc/frr/frr.conf')
-        router.cmd('systemctl restart frr')
-        info(f'* OSPF configurado em {router.name}\n')
+        try:
+            subprocess.run(['systemctl', 'restart', 'frr'], check=True)
+            info(f'* OSPF configurado em {router.name}\n')
+        except subprocess.CalledProcessError as e:
+            error(f'* Falha ao reiniciar FRR em {router.name}: {e}\n')
 
 def run():
     setLogLevel('info')
