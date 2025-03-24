@@ -1,68 +1,78 @@
 #!/usr/bin/env python3
 from mininet.topo import Topo
 from mininet.net import Mininet
-from mininet.node import RemoteController
+from mininet.node import RemoteController, Node
 from mininet.link import TCLink
 from mininet.util import dumpNetConnections
+
+# Definição de um roteador Linux que ativa o IP forwarding
+class LinuxRouter(Node):
+    def config(self, **params):
+        super(LinuxRouter, self).config(**params)
+        # Ativar o IP forwarding para roteamento
+        self.cmd('sysctl -w net.ipv4.ip_forward=1')
+    def terminate(self):
+        self.cmd('sysctl -w net.ipv4.ip_forward=0')
+        super(LinuxRouter, self).terminate()
 
 class MyTopo(Topo):
     def __init__(self):
         super(MyTopo, self).__init__()
 
-        # Número de switches por camada
+        # Definir o valor de k e as quantidades por camada
         k = 4
         pod = k
-        L1 = (pod // 2) ** 2
-        L2 = pod * pod // 2
-        L3 = L2
+        L1 = (pod // 2) ** 2     # Número de roteadores Core
+        L2 = pod * pod // 2      # Número de roteadores de Agregação
+        L3 = L2                # Número de roteadores de Borda (Edge)
 
-        # Criação dos switches
-        c = []  # switches do Core
-        a = []  # switches de Agregação
-        e = []  # switches de Borda (Edge)
+        # Criação dos nós de roteamento (LinuxRouter) para todas as camadas
+        core = []  # Core
+        agg = []   # Agregação
+        edge = []  # Edge
 
-        # Adicionar switches do Core
+        # Adiciona roteadores Core
         for i in range(L1):
-            c_sw = self.addSwitch('c{}'.format(i + 1))
-            c.append(c_sw)
+            r = self.addNode('c{}'.format(i+1), cls=LinuxRouter)
+            core.append(r)
 
-        # Adicionar switches de Agregação
+        # Adiciona roteadores de Agregação
         for i in range(L2):
-            a_sw = self.addSwitch('a{}'.format(L1 + i + 1))
-            a.append(a_sw)
+            r = self.addNode('a{}'.format(L1+i+1), cls=LinuxRouter)
+            agg.append(r)
 
-        # Adicionar switches de Borda
+        # Adiciona roteadores Edge
         for i in range(L3):
-            e_sw = self.addSwitch('e{}'.format(L1 + L2 + i + 1))
-            e.append(e_sw)
+            r = self.addNode('e{}'.format(L1+L2+i+1), cls=LinuxRouter)
+            edge.append(r)
 
-        # Criar links entre os switches
-        # Links entre Core e Agregação
+        # Criar links entre Core e Agregação
         for i in range(L1):
-            c_sw = c[i]
+            core_node = core[i]
             start = i % (pod // 2)
             for j in range(pod):
-                self.addLink(c_sw, a[start + j * (pod // 2)], bw=10)
+                agg_node = agg[start + j * (pod // 2)]
+                self.addLink(core_node, agg_node, bw=10)
 
-        # Links entre Agregação e Borda
+        # Criar links entre Agregação e Edge
         for i in range(L2):
             group = i // (pod // 2)
             for j in range(pod // 2):
-                self.addLink(a[i], e[group * (pod // 2) + j], bw=10)
+                edge_index = group * (pod // 2) + j
+                self.addLink(agg[i], edge[edge_index], bw=10)
 
-        # Criar hosts e ligar aos switches de Borda
-        # Atribuindo o IP diretamente na criação para evitar problemas posteriores.
+        # Criar hosts e ligá-los aos roteadores Edge
         for i in range(L3):
             for j in range(2):
-                ip_address = "10.2.{}.{}/24".format(i + 1, j + 2)
-                default_route = "via 10.2.{}.1".format(i + 1)
-                hs = self.addHost('h{}'.format(i * 2 + j + 1),
-                                  ip=ip_address,
-                                  defaultRoute=default_route,
-                                  bw=10)
-                self.addLink(e[i], hs)
+                ip_address = "10.2.{}.{}/24".format(i+1, j+2)
+                default_route = "via 10.2.{}.1".format(i+1)
+                h = self.addHost('h{}'.format(i*2+j+1),
+                                 ip=ip_address,
+                                 defaultRoute=default_route,
+                                 bw=10)
+                self.addLink(edge[i], h, bw=10)
 
-topos = {"mytopo": (lambda: MyTopo())}
+topos = { "mytopo": (lambda: MyTopo()) }
 
 def configure_ips(net, topo):
     k = 4
@@ -71,58 +81,46 @@ def configure_ips(net, topo):
     L2 = pod * pod // 2
     L3 = L2
 
-    # Configurar IPs dos switches (mantendo a lógica já definida)
+    # Configurar os endereços IP dos roteadores Core
     for i in range(L1):
-        switch = net.getNodeByName('c{}'.format(i + 1))
-        switch.cmd('ip addr add 10.0.{}.1/24 dev c{}-eth1'.format(i + 1, i + 1))
-        switch.cmd('ip link set c{}-eth1 up'.format(i + 1))
-        switch.cmd('ip addr add 10.0.{}.2/24 dev c{}-eth2'.format(i + 1, i + 1))
-        switch.cmd('ip link set c{}-eth2 up'.format(i + 1))
-        switch.cmd('ip addr add 10.0.{}.3/24 dev c{}-eth3'.format(i + 1, i + 1))
-        switch.cmd('ip link set c{}-eth3 up'.format(i + 1))
-        switch.cmd('ip addr add 10.0.{}.4/24 dev c{}-eth4'.format(i + 1, i + 1))
-        switch.cmd('ip link set c{}-eth4 up'.format(i + 1))
+        router = net.getNodeByName('c{}'.format(i+1))
+        # Assumindo que cada roteador core possui 4 interfaces
+        for intf in range(1,5):
+            router.cmd('ip addr add 10.0.{}.{}0/24 dev c{}-eth{}'.format(i+1, intf, i+1, intf))
+            router.cmd('ip link set c{}-eth{} up'.format(i+1, intf))
 
+    # Configurar os roteadores de Agregação
     for i in range(L2):
-        switch = net.getNodeByName('a{}'.format(L1 + i + 1))
-        switch.cmd('ip addr add 10.1.{}.1/24 dev a{}-eth1'.format(i + 1, L1 + i + 1))
-        switch.cmd('ip link set a{}-eth1 up'.format(L1 + i + 1))
-        switch.cmd('ip addr add 10.1.{}.2/24 dev a{}-eth2'.format(i + 1, L1 + i + 1))
-        switch.cmd('ip link set a{}-eth2 up'.format(L1 + i + 1))
-        switch.cmd('ip addr add 10.1.{}.3/24 dev a{}-eth3'.format(i + 1, L1 + i + 1))
-        switch.cmd('ip link set a{}-eth3 up'.format(L1 + i + 1))
-        switch.cmd('ip addr add 10.1.{}.4/24 dev a{}-eth4'.format(i + 1, L1 + i + 1))
-        switch.cmd('ip link set a{}-eth4 up'.format(L1 + i + 1))
+        router = net.getNodeByName('a{}'.format(L1+i+1))
+        for intf in range(1,5):
+            router.cmd('ip addr add 10.1.{}.{}0/24 dev a{}-eth{}'.format(i+1, intf, L1+i+1, intf))
+            router.cmd('ip link set a{}-eth{} up'.format(L1+i+1, intf))
 
+    # Configurar os roteadores Edge
     for i in range(L3):
-        switch = net.getNodeByName('e{}'.format(L1 + L2 + i + 1))
-        switch.cmd('ip addr add 10.2.{}.1/24 dev e{}-eth1'.format(i + 1, L1 + L2 + i + 1))
-        switch.cmd('ip link set e{}-eth1 up'.format(L1 + L2 + i + 1))
-        switch.cmd('ip addr add 10.2.{}.2/24 dev e{}-eth2'.format(i + 1, L1 + L2 + i + 1))
-        switch.cmd('ip link set e{}-eth2 up'.format(L1 + L2 + i + 1))
-        switch.cmd('ip addr add 10.2.{}.3/24 dev e{}-eth3'.format(i + 1, L1 + L2 + i + 1))
-        switch.cmd('ip link set e{}-eth3 up'.format(L1 + L2 + i + 1))
-        switch.cmd('ip addr add 10.2.{}.4/24 dev e{}-eth4'.format(i + 1, L1 + L2 + i + 1))
-        switch.cmd('ip link set e{}-eth4 up'.format(L1 + L2 + i + 1))
+        router = net.getNodeByName('e{}'.format(L1+L2+i+1))
+        for intf in range(1,5):
+            router.cmd('ip addr add 10.2.{}.{}0/24 dev e{}-eth{}'.format(i+1, intf, L1+L2+i+1, intf))
+            router.cmd('ip link set e{}-eth{} up'.format(L1+L2+i+1, intf))
 
-    # Instalar FRR e traceroute nos switches
-    for switch in net.switches:
-        switch.cmd('apt-get update')
-        switch.cmd('apt-get install -y traceroute frr')
-        switch.cmd('frr -d -l stdout -f frr_configs/frr_{}.conf'.format(switch.name))
-        switch.cmd('service frr status')
-
-    # Configurar DNS, atualizar e instalar traceroute nos hosts
-    for host in net.hosts:
-        host.cmd('echo "nameserver 8.8.8.8" >> /etc/resolv.conf')
-        host.cmd('echo "nameserver 8.8.4.4" >> /etc/resolv.conf')
-        host.cmd('apt-get update')
-        host.cmd('apt-get install -y traceroute')
+    # Instalar FRR e traceroute nos roteadores
+    for router in net.controllers + net.switches + net.hosts: 
+        # Aqui você pode ajustar se quiser instalar somente nos roteadores
+        router.cmd('apt-get update')
+        router.cmd('apt-get install -y traceroute frr')
+    
+    # Iniciar FRR nos roteadores: para cada nó que seja roteador, inicie o FRR com o arquivo de configuração correspondente
+    for node in net.controllers + net.switches:
+        # Se você tiver arquivos de configuração separados para cada roteador, pode usar:
+        node_name = node.name
+        node.cmd('frr -d -l stdout -f frr_configs/frr_{}.conf'.format(node_name))
+        node.cmd('service frr status')
 
 if __name__ == '__main__':
     topo = MyTopo()
     net = Mininet(topo=topo, link=TCLink)
     net.start()
     configure_ips(net, topo)
+    dumpNetConnections(net.hosts)
     net.interact()
     net.stop()
