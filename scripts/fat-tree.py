@@ -51,10 +51,11 @@ class FatTreeTopo(Topo):
             routers.append(router)
             self.addLink(router, edge_switches[i], bw=10)
 
-        # Conectar Core a Agregação
+        # Conectar Core a Agregação (Corrigido)
         for i in range(num_core):
             for j in range(k // 2):
-                self.addLink(core_switches[i], agg_switches[(i % (k // 2)) + j * (k // 2)], bw=10)
+                agg_index = (i // (k // 2)) * (k // 2) + j
+                self.addLink(core_switches[i], agg_switches[agg_index], bw=10)
 
         # Conectar Agregação a Edge
         for i in range(num_agg):
@@ -72,8 +73,17 @@ topos = {"fattree": (lambda: FatTreeTopo())}
 
 if __name__ == '__main__':
     topo = FatTreeTopo()
-    net = Mininet(topo=topo, link=TCLink, controller=None)
+    net = Mininet(topo=topo, link=TCLink, controller=RemoteController)
+    
     net.start()
-    dumpNetConnections(net.hosts)
+
+    # Configurar roteadores após iniciar a rede
+    for router in net.hosts:
+        if 'r' in router.name:  # Verifica se é um roteador
+            router.cmd('sysctl -w net.ipv4.ip_forward=1')
+            router.cmd('ip route add default via 10.0.0.1')
+
+    dumpNetConnections(net)  # Corrigido
+
     net.interact()
     net.stop()
