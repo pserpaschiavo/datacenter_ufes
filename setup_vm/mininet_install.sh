@@ -26,14 +26,14 @@ sed -i.bak 's|git://|https://|g' ./util/install.sh
 # Instalar o Mininet
 ./util/install.sh -a
 
-# Instalar as bibliotecas no ambiente virtual
-pip install ryu==4.34 eventlet==0.30.2
+# # Instalar as bibliotecas no ambiente virtual
+# pip install ryu==4.34 eventlet==0.30.2
 
-pip list
+# pip list
 
-# Configurar o PATH e ativar o ambiente virtual no .bashrc
-echo 'source /home/vagrant/.venv/bin/activate' >> /home/vagrant/.bashrc
-echo 'export PATH=$PATH:~/.local/bin' >> /home/vagrant/.bashrc
+# # Configurar o PATH e ativar o ambiente virtual no .bashrc
+# echo 'source /home/vagrant/.venv/bin/activate' >> /home/vagrant/.bashrc
+# echo 'export PATH=$PATH:~/.local/bin' >> /home/vagrant/.bashrc
 
 # Instalar o FRR - FRRouting
 cd /home/vagrant/
@@ -46,6 +46,9 @@ echo deb '[signed-by=/usr/share/keyrings/frrouting.gpg]' https://deb.frrouting.o
 
 sudo apt update
 sudo apt install frr frr-pythontools -y
+
+sudo sed -i 's/ospfd=no/ospfd=yes/' /etc/frr/daemons
+sudo systemctl restart frr
 
 # Clonar o repositório datacenter-ufes
 git clone https://github.com/pserpaschiavo/datacenter_ufes.git
