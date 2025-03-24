@@ -1,16 +1,16 @@
+#!/usr/bin/env python3
 from mininet.topo import Topo
 from mininet.net import Mininet
 from mininet.node import Node, OVSKernelSwitch
 from mininet.link import TCLink
 from mininet.util import dumpNodeConnections
-from mininet.log import setLogLevel
+from mininet.log import setLogLevel, info
 import os
 
 class LinuxRouter(Node):
-    """Um roteador baseado em Linux com FRR instalado"""
+    """Roteador Linux com FRR para OSPF"""
     def config(self, **params):
         super(LinuxRouter, self).config(**params)
-        # Habilitar forwarding
         self.cmd('sysctl -w net.ipv4.ip_forward=1')
         
     def terminate(self):
@@ -20,67 +20,65 @@ class LinuxRouter(Node):
 class FatTreeTopo(Topo):
     def __init__(self, k=4):
         super(FatTreeTopo, self).__init__()
-        
         self.k = k
-        num_core = (k // 2) ** 2
-        num_agg = k * k // 2
+        self.host_list = []  # Lista para armazenar hosts
+        self.buildTopology()
+    
+    def buildTopology(self):
+        num_core = (self.k // 2) ** 2
+        num_agg = self.k * self.k // 2
         num_edge = num_agg
         num_hosts_per_edge = 2
 
-        # Criação dos dispositivos
-        core_switches = [self.addSwitch(f'c{i+1}', cls=OVSKernelSwitch) 
-                         for i in range(num_core)]
-        agg_switches = [self.addSwitch(f'a{i+1}', cls=OVSKernelSwitch) 
-                        for i in range(num_agg)]
-        edge_switches = [self.addSwitch(f'e{i+1}', cls=OVSKernelSwitch) 
-                         for i in range(num_edge)]
-        routers = [self.addHost(f'r{i+1}', cls=LinuxRouter, ip=f'10.0.{i}.1/24') 
-                   for i in range(num_edge)]
-        
+        # Dispositivos
+        cores = [self.addSwitch(f'c{i+1}', cls=OVSKernelSwitch) for i in range(num_core)]
+        aggs = [self.addSwitch(f'a{i+1}', cls=OVSKernelSwitch) for i in range(num_agg)]
+        edges = [self.addSwitch(f'e{i+1}', cls=OVSKernelSwitch) for i in range(num_edge)]
+        routers = [self.addHost(f'r{i+1}', cls=LinuxRouter) for i in range(num_edge)]
+
         # Conexões Core-Aggregation
-        for i in range(num_core):
-            pod_offset = (i // (k//2)) * (k//2)
-            for j in range(k//2):
-                agg_idx = pod_offset + j
-                self.addLink(core_switches[i], agg_switches[agg_idx], 
-                            bw=10, intfName1=f'c{i+1}-eth{agg_idx+1}',
-                            params1={'ip': f'10.1.{i}.{agg_idx+1}/24'})
+        for i, core in enumerate(cores):
+            pod = (i // (self.k//2)) * (self.k//2)
+            for j in range(self.k//2):
+                agg = aggs[pod + j]
+                self.addLink(core, agg, bw=10,
+                           intfName1=f'c{i+1}-eth{pod+j+1}',
+                           params1={'ip': f'10.1.{i}.{j+1}/24'})
 
         # Conexões Aggregation-Edge
-        for i in range(num_agg):
-            pod = i // (k//2)
-            edge_offset = pod * (k//2)
-            for j in range(k//2):
-                edge_idx = edge_offset + j
-                self.addLink(agg_switches[i], edge_switches[edge_idx], 
-                            bw=10, intfName1=f'a{i+1}-eth{edge_idx+1}',
-                            params1={'ip': f'10.2.{i}.{edge_idx+1}/24'})
+        for i, agg in enumerate(aggs):
+            pod = i // (self.k//2)
+            for j in range(self.k//2):
+                edge = edges[pod * (self.k//2) + j]
+                self.addLink(agg, edge, bw=10,
+                            intfName1=f'a{i+1}-eth{j+1}',
+                            params1={'ip': f'10.2.{i}.{j+1}/24'})
 
-        # Conexões Edge-Routers
-        for i in range(num_edge):
-            self.addLink(edge_switches[i], routers[i], bw=10,
-                         intfName2=f'r{i+1}-eth0',
-                         params2={'ip': f'10.0.{i}.1/24'})
-
-        # Conexões Routers-Hosts
-        self.hosts = []
-        for i in range(num_edge):
+        # Conexões Edge-Router-Hosts
+        for i, (edge, router) in enumerate(zip(edges, routers)):
+            # Link Edge-Router
+            self.addLink(edge, router, bw=10,
+                        intfName2=f'r{i+1}-eth0',
+                        params2={'ip': f'10.0.{i}.1/24'})
+            
+            # Hosts
             for j in range(num_hosts_per_edge):
                 host = self.addHost(f'h{i*num_hosts_per_edge+j+1}',
-                                   ip=f'10.0.{i}.{j+2}/24',
-                                   defaultRoute=f'via 10.0.{i}.1')
-                self.addLink(routers[i], host, bw=10,
-                             intfName1=f'r{i+1}-eth{j+1}',
-                             params1={'ip': f'10.0.{i}.{j+2}/24'})
-                self.hosts.append(host)
+                                  ip=f'10.0.{i}.{j+2}/24',
+                                  defaultRoute=f'via 10.0.{i}.1')
+                self.addLink(router, host, bw=10,
+                            intfName1=f'r{i+1}-eth{j+1}',
+                            params1={'ip': f'10.0.{i}.{j+2}/24'})
+                self.host_list.append(host)
+    
+    def hosts(self, sort=True):
+        """Método exigido pelo Mininet"""
+        return sorted(self.host_list, key=lambda h: int(h.name[1:])) if sort else self.host_list
 
 def configure_ospf(net, k):
-    """Configura o FRR/OSPF em todos os roteadores"""
-    # Primeiro garanta que o diretório de configurações existe
-    if not os.path.exists('frr_configs'):
-        os.makedirs('frr_configs')
+    """Configura OSPF nos roteadores"""
+    os.makedirs('frr_configs', exist_ok=True)
     
-    # Gerar configurações específicas para cada roteador
     for i, router in enumerate([h for h in net.hosts if 'r' in h.name]):
         config = f"""
 hostname {router.name}
@@ -101,31 +99,35 @@ line vty
         with open(f'frr_configs/frr_{router.name}.conf', 'w') as f:
             f.write(config)
         
-        # Copiar configuração para o container e iniciar FRR
-        router.cmd('cp /etc/frr/frr.conf /etc/frr/frr.conf.bak')  # Backup
+        # Configurar interfaces
+        router.cmd(f'ifconfig r{i+1}-eth0 10.0.{i}.1/24')
+        
+        # Configurar FRR
         router.cmd(f'cp frr_configs/frr_{router.name}.conf /etc/frr/frr.conf')
         router.cmd('systemctl restart frr')
-        print(f"Configuração OSPF aplicada em {router.name}")
+        info(f'* OSPF configurado em {router.name}\n')
 
 def run():
+    setLogLevel('info')
     topo = FatTreeTopo(k=4)
     net = Mininet(topo=topo, link=TCLink, controller=None)
-    net.start()
     
-    # Configurar OSPF
-    configure_ospf(net, k=4)
-    
-    # Testar conectividade
-    print("Testando conectividade...")
-    net.pingAll()
-    
-    # Entrar no CLI
-    print("Rede Fat-Tree com OSPF+ECMP está funcionando!")
-    print("Use 'vtysh' nos roteadores para verificar OSPF")
-    net.interact()
-    
-    net.stop()
+    try:
+        net.start()
+        info('* Configurando OSPF...\n')
+        configure_ospf(net, k=4)
+        
+        info('* Testando conectividade...\n')
+        net.pingAll()
+        
+        info('\n* Comandos úteis:')
+        info(' - Nos roteadores: "vtysh" para acessar o shell FRR')
+        info(' - "show ip ospf neighbor" para ver adjacências OSPF')
+        info(' - "show ip route" para ver rotas ECMP\n')
+        
+        net.interact()
+    finally:
+        net.stop()
 
 if __name__ == '__main__':
-    setLogLevel('info')
     run()
