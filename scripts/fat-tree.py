@@ -101,7 +101,9 @@ def configure_ips(net, topo):
         for j in range(2):
             host = net.getNodeByName('h{}'.format(i * 2 + j + 1))
             new_ip = "10.2.{}.{}/24".format(i + 1, j + 2)
-            host.setIP(new_ip, intf="h{}-eth0".format(i * 2 + j + 1))
+            host.setIP(new_ip, intf=host.defaultIntf())
+            # Força a interface a ficar UP
+            host.cmd("ifconfig {} up".format(host.defaultIntf()))
             host.cmd('ip route add default via 10.2.{}.1'.format(i + 1))
 
     # Instalar FRR e traceroute e iniciar FRR
