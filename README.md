@@ -15,7 +15,7 @@ O *Mininet* é uma ferramenta poderosa para a criação de ambientes de rede vir
 
 #### Controladores SDN: O Cérebro da Rede
 
-Os controladores SDN desempenham um papel central na arquitetura SDN, sendo responsáveis pelo gerenciamento do fluxo de dados e pela tomada de decisões na rede. Eles se comunicam com os dispositivos de rede através de protocolos como o OpenFlow, permitindo a implementação de políticas de rede de forma centralizada.
+Os controladores SDN desempenham um papel central na arquitetura SDN, sendo responsáveis pelo gerenciamento do fluxo de dados e pela tomada de decisões na rede. Eles se comunicam com os dispositivos de rede através de protocolos como o *OpenFlow*, permitindo a implementação de políticas de rede de forma centralizada.
 
 #### Topologias de Rede: A Estrutura da Conectividade
 
@@ -23,8 +23,8 @@ A topologia de rede define a forma como os dispositivos estão conectados entre 
 
 #### *Fat Tree*: Uma Topologia de Alto Desempenho para Data Centers
 
-A topologia *Fat Tree* se destaca por sua alta largura de banda e baixa latência, tornando-a ideal para data centers e outras aplicações de alto desempenho. Sua estrutura hierárquica e simétrica garante uma distribuição eficiente do tráfego, evitando gargalos e otimizando o desempenho da rede.
-Conclusão
+A topologia *Fat Tree* se destaca por sua alta largura de banda e baixa latência, tornando-a ideal para *datacenters* e outras aplicações de alto desempenho. Sua estrutura hierárquica e simétrica garante uma distribuição eficiente do tráfego, evitando gargalos e otimizando o desempenho da rede.
+
 ___
 
 ### **Descrição dos recursos**
@@ -37,16 +37,15 @@ O uso do script do Vagrant é opcional. A máquina virtual (VM) planejada tem as
 |Memória	        |4096 Mb        |
 |SO   	            |Ubuntu 64bits 	|
 |Versão	SO          |22.04 (jammy) 	|
-|Versão Python      |3.7.17         |
+|Versão *Python*    |3.7.17         |
 |Versão	*Mininet*   |2.3.0       	|
-|Versão Ryu         |4.34           |
-|Versão FRR         |10.3           |
+|Versão *Ryu*       |4.34           |
+|Versão *FRR*       |10.3           |
 
 
-> Caso o usuário prefira usar outro software de virtualização (VirtualBox, VMware, KVM), o arquivo [install_*Mininet*.sh](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/setup_vm/*Mininet*_install.sh) poderá ser usado[^*].
+> Caso o usuário prefira usar outro software de virtualização (VirtualBox, VMware, KVM), o arquivo [install_mininet.sh](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/setup_vm/mininet_install.sh) poderá ser usado[^*].
+
 ___
-
----
 
 ### **Modo de uso (Vagrant Script)**
 
@@ -78,7 +77,7 @@ ___
 
 ### **Checagem das aplicações:**
 
-Esta seção apresenta um roteiro de testes para verificar o funcionamento do *Ryu* e do **Mininet**.
+Esta seção apresenta um roteiro de testes para verificar o funcionamento do *Ryu* e do *Mininet*.
 
 Abra dois terminais:
 
@@ -87,7 +86,7 @@ No **terminal 1**, digite o comando abaixo para ativar o controlador *Ryu*:
 ryu-manager ryu.app.simple_switch_stp_13
 ```
 
-No **terminal 2**, digite o comando abaixo para acessar **Mininet**:
+No **terminal 2**, digite o comando abaixo para acessar *Mininet*:
 
 ```
 sudo mn --custom ./Fat-Tree-Data-Center-Topology/Code/Fat\ Tree.py --topo=mytopo \
@@ -102,7 +101,7 @@ Observe se os dois terminais não apresentam erros e se suas informações serã
 ![gif das telas](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/assets/gif/*Mininet*.gif)
 
 
-> Se o comportamento dos logs e dos comandos dentro do **Mininet** forem semelhantes ao do exemplo acima, a máquina virtual está funcionando como esperado.
+> Se o comportamento dos logs e dos comandos dentro do *Mininet* forem semelhantes ao do exemplo acima, a máquina virtual está funcionando como esperado.
 
 
-[^*]: Após o download do arquivo [install_*Mininet*.sh](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/setup_vm/*Mininet*_install.sh), basta digitar o comando `bash ./datacenter-ufes/setup_vm/*Mininet*_install.sh` em uma pasta que hospedará o *Mininet*.
+[^*]: Após o download do arquivo [install_mininet.sh](https://github.com/pserpaschiavo/datacenter_ufes/blob/main/setup_vm/mininet_install.sh), basta digitar o comando `bash ./datacenter-ufes/setup_vm/mininet_install.sh` em uma pasta que hospedará o *Mininet*.
