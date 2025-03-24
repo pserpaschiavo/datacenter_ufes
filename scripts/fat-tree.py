@@ -99,12 +99,10 @@ def configure_ips(net, topo):
     # Configurar IPs dos hosts
     for i in range(L3):
         for j in range(2):
-            host = net.getNodeByName('h{}'.format(i * 2 + j + 1))
-            new_ip = "10.2.{}.{}/24".format(i + 1, j + 2)
-            host.setIP(new_ip, intf=host.defaultIntf())
-            # Força a interface a ficar UP
-            host.cmd("ifconfig {} up".format(host.defaultIntf()))
-            host.cmd('ip route add default via 10.2.{}.1'.format(i + 1))
+            ip_address = "10.2.{}.{}/24".format(i + 1, j + 2)
+            # Aqui, atribuímos o IP e também podemos definir a rota padrão, se desejar
+            hs = self.addHost('h{}'.format(i * 2 + j + 1), ip=ip_address, defaultRoute="via 10.2.{}.1".format(i + 1), bw=10)
+            self.addLink(e[i], hs)
 
     # Instalar FRR e traceroute e iniciar FRR
     for switch in net.switches:
