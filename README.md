@@ -89,7 +89,7 @@ ryu-manager ryu.app.simple_switch_stp_13
 No **terminal 2**, digite o comando abaixo para acessar *Mininet*:
 
 ```
-sudo mn --custom ./Fat-Tree-Data-Center-Topology/Code/Fat\ Tree.py --topo=mytopo \
+sudo mn --custom ./datacenter-ufes/scripts/fat-tree-ryu.py --topo=mytopo \
     --controller=remote,ip=127.0.0.1,port=6633 \
     --mac --arp --link=tc
 ```

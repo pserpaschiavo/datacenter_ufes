@@ -26,14 +26,14 @@ sed -i.bak 's|git://|https://|g' ./util/install.sh
 # Instalar o Mininet
 ./util/install.sh -a
 
-# # Instalar as bibliotecas no ambiente virtual
-# pip install ryu==4.34 eventlet==0.30.2
+# Instalar as bibliotecas no ambiente virtual
+pip install ryu==4.34 eventlet==0.30.2
 
-# pip list
+pip list
 
-# # Configurar o PATH e ativar o ambiente virtual no .bashrc
-# echo 'source /home/vagrant/.venv/bin/activate' >> /home/vagrant/.bashrc
-# echo 'export PATH=$PATH:~/.local/bin' >> /home/vagrant/.bashrc
+# Configurar o PATH e ativar o ambiente virtual no .bashrc
+echo 'source /home/vagrant/.venv/bin/activate' >> /home/vagrant/.bashrc
+echo 'export PATH=$PATH:~/.local/bin' >> /home/vagrant/.bashrc
 
 # Instalar o FRR - FRRouting
 cd /home/vagrant/
